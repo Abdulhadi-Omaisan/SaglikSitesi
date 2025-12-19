@@ -38,7 +38,7 @@
 <div id="nobetci-alert"></div>
 
 <header>
-    <div class="logo">🏥 HASTANE</div>
+    <div class="logo"> HASTANE</div>
     <div class="nav-btns">
         <a href="my-bookings.html" class="btn-my-bookings">حجوزاتي</a>
         <a href="login.html" class="btn-staff">دخول الموظفين</a>
@@ -84,9 +84,10 @@
             const data = doc.data();
             const alertBox = document.getElementById('nobetci-alert');
             alertBox.style.display = 'block';
-            alertBox.innerHTML = `📢 الصيدلية المناوبة الآن: ${data.name} | <a href="${data.location}" target="_blank" style="color: #0f5132;">موقع الخريطة 📍</a>`;
+            alertBox.innerHTML = `📢  ${data.name} | <a href="${data.location}" target="_blank" style="color: #0f5132;">📍</a>`;
         }
     });
 </script>
 </body>
 </html>
+
