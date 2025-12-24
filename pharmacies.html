@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="main-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دليل الصيدليات - HASTANE</title>
+    <title id="page-title">دليل الصيدليات - HASTANE</title>
     <style>
-        /* توحيد الألوان مع الهوية الجديدة */
         :root {
-            --primary: #1b4332; /* الأخضر الغامق الفخم */
+            --primary: #1b4332;
             --secondary: #2d6a4f;
             --bg: #f8f9fa;
             --white: #ffffff;
@@ -21,9 +20,9 @@
             margin: 0;
             background-color: var(--bg);
             color: #333;
+            transition: 0.3s;
         }
 
-        /* الهيدر الموحد */
         header {
             background-color: var(--white);
             padding: 15px 8%;
@@ -31,24 +30,23 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            position: sticky; top: 0; z-index: 1000;
         }
 
         .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-decoration: none; }
         
-        nav a { 
-            text-decoration: none; 
-            color: var(--primary); 
-            font-weight: 600; 
-            padding: 8px 15px;
-            border-radius: 8px;
-            transition: 0.3s;
+        .nav-links { display: flex; align-items: center; gap: 10px; }
+        .nav-links a { 
+            text-decoration: none; color: var(--primary); font-weight: 600; 
+            padding: 8px 15px; border-radius: 8px; transition: 0.3s; 
         }
-        nav a:hover { background-color: var(--accent-green); }
+        .nav-links a:hover { background-color: var(--accent-green); }
 
-        /* منطقة العنوان */
+        /* أزرار اللغة */
+        .lang-switcher { display: flex; gap: 5px; margin: 0 10px; }
+        .lang-btn { cursor: pointer; border: 1px solid #ddd; padding: 5px 8px; border-radius: 5px; font-size: 0.75rem; background: #fff; font-weight: bold; }
+        .lang-btn:hover { background: var(--accent-green); }
+
         .hero-title {
             background: var(--primary);
             color: white;
@@ -58,20 +56,14 @@
             border-radius: 0 0 40px 40px;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto 50px;
-            padding: 0 20px;
-        }
+        .container { max-width: 1000px; margin: 0 auto 50px; padding: 0 20px; }
 
-        /* شبكة الصيدليات */
         .pharmacy-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
         }
 
-        /* كرت الصيدلية بتصميم "مودرن" */
         .pharmacy-card {
             background: var(--white);
             border-radius: 20px;
@@ -83,78 +75,53 @@
             overflow: hidden;
         }
 
-        .pharmacy-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--secondary);
-        }
+        .pharmacy-card:hover { transform: translateY(-10px); border-color: var(--secondary); }
+        .pharmacy-card h3 { color: var(--primary); margin-top: 0; font-size: 1.4rem; }
 
-        .pharmacy-card h3 { 
-            color: var(--primary); 
-            margin-top: 0; 
-            font-size: 1.4rem;
-        }
-
-        /* تمييز الصيدلية المناوبة */
         .nobetci-card {
             background: var(--accent-green) !important;
             border: 2px solid var(--secondary) !important;
         }
 
         .status-badge {
-            display: inline-block;
-            padding: 6px 15px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: white;
-            margin-top: 15px;
+            display: inline-block; padding: 6px 15px; border-radius: 10px;
+            font-size: 0.85rem; font-weight: bold; color: white; margin-top: 15px;
         }
 
         .open { background-color: var(--open-color); }
         .closed { background-color: var(--closed-color); }
+        .nobetci-badge { background-color: var(--primary); }
 
-        .info { 
-            margin: 12px 0; 
-            font-size: 0.95rem; 
-            color: #555; 
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .info { margin: 12px 0; font-size: 0.95rem; color: #555; display: flex; align-items: center; gap: 8px; }
         
         .btn-map {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            transition: 0.3s;
+            display: block; margin-top: 20px; text-align: center;
+            background: var(--primary); color: white; text-decoration: none;
+            padding: 12px; border-radius: 10px; font-weight: bold; transition: 0.3s;
         }
-        
         .btn-map:hover { background: var(--secondary); }
 
-        .nobetci-star {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            font-size: 1.5rem;
-        }
+        .nobetci-star { position: absolute; top: 15px; left: 15px; font-size: 1.5rem; }
+        [dir="ltr"] .nobetci-star { left: auto; right: 15px; }
     </style>
 </head>
 <body>
 
 <header>
     <a href="index.html" class="logo">HASTANE</a>
-    <nav><a href="index.html">الرئيسية</a></nav>
+    <nav class="nav-links">
+        <div class="lang-switcher">
+            <button class="lang-btn" onclick="setLanguage('ar')">AR</button>
+            <button class="lang-btn" onclick="setLanguage('tr')">TR</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+        <a href="index.html" id="nav-home">الرئيسية</a>
+    </nav>
 </header>
 
 <div class="hero-title">
-    <h1>دليل الصيدليات في كارابوك</h1>
-    <p>ابحث عن أقرب صيدلية ومواعيد العمل المحدثة</p>
+    <h1 id="hero-h1">دليل الصيدليات في كارابوك</h1>
+    <p id="hero-p">ابحث عن أقرب صيدلية ومواعيد العمل المحدثة</p>
 </div>
 
 <div class="container">
@@ -166,7 +133,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
 <script>
-    // 1. إعدادات Firebase الموحدة
     const firebaseConfig = {
         apiKey: "AIzaSyBD2Ge6v0TStampv_l_bRGnzTDVPKvCW20",
         authDomain: "hastane-b2c48.firebaseapp.com",
@@ -179,74 +145,306 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // 2. القائمة الثابتة
-    const pharmacies = [
-        {
-            name: "صيدلية الشفاء",
-            location: "شارع الملك فيصل، وسط المدينة",
-            openTime: 8,
-            closeTime: 23,
-            mapUrl: "https://maps.google.com"
+    const translations = {
+        ar: {
+            title: "دليل الصيدليات - HASTANE",
+            home: "الرئيسية",
+            heroH1: "دليل الصيدليات في كارابوك",
+            heroP: "ابحث عن أقرب صيدلية ومواعيد العمل المحدثة",
+            nobetciTitle: "الصيدلية المناوبة الآن",
+            statusOpen: "مفتوح الآن",
+            statusClosed: "مغلق حالياً",
+            statusNobetci: "مناوبة",
+            hoursLabel: "⏰ المواعيد: ",
+            mapBtn: "عرض على الخريطة",
+            linkText: "رابط الموقع",
+            dir: "rtl",
+            pharmacies: [
+                
+    { name: "صيدلية Akkaya المركز", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, Pınar Apt. No:20 Merkez / Karabük" },
+    { name: "صيدلية Asuman المركز", loc: "Fevzi Fırat Caddesi, No:51/A Merkez / Karabük (İstasyon Mevkii-İşkur İl Müdürlüğü Hizmet Binası karşısı)" },
+    { name: "صيدلية Atay المركز", loc: "Fevzi Fırat Caddesi No:64/A Merkez / Karabük" },
+    { name: "صيدلية Ayşe Abla المركز", loc: "Şirinevler Mahallesi, Alpaslan Caddesi Sevim Apartmanı No:2/D Merkez / Karabük" },
+    { name: "صيدلية Azim المركز", loc: "Soğuksu Mahallesi, Oğuzlar Caddesi No:2 Merkez / Karabük (Soğuksu Aile Sağlığı Merkezi karşısı)" },
+    { name: "صيدلية Birsen المركز", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, Pınar Apt. No:1 Merkez / Karabük (Şirinevler Eğitim Araştırma Hastanesi karşısı)" },
+    { name: "صيدلية Bulut المركز", loc: "Yeşil Mahalle, Esentepe Taşkent Caddesi No:78 Merkez / Karabük" },
+    { name: "صيدلية Çağlayan المركز", loc: "Hürriyet Caddesi, No:119 Merkez / Karabük" },
+    { name: "صيدلية Derman المركز", loc: "PTT Caddesi Havuzluhan No:25/B Merkez / Karabük" },
+    { name: "صيدلية Dilek المركز", loc: "Bayır Mahallesi, Fevzi Çakmak Caddesi No:9 Merkez / Karabük" },
+    { name: "صيدلية Esentepe المركز", loc: "Esentepe Mahallesi, Taşkent Caddesi Camialtı Sokak No:11 Merkez / Karabük" },
+    { name: "صيدلية Güven المركز", loc: "Yeşil Mahallesi, Bilgin Sokak No:15/A Merkez / Karabük" },
+    { name: "صيدلية Hazar المركز", loc: "Kayabaşı Mahallesi, Barbaros Caddesi No:10 Merkez / Karabük" },
+    { name: "صيدلية İlkay المركز", loc: "Şirinevler Mahallesi, İlhanlılar Caddesi, No:1/C Merkez / Karabük" },
+    { name: "صيدلية İrem المركز", loc: "Şirinevler Mahallesi, Alparslan Caddesi Sevim Apt No:2/B Merkez / Karabük" },
+    { name: "صيدلية إسطنبول المركز", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, Arslan Apt. No:3/13 Merkez / Karabük" },
+    { name: "صيدلية Karabük Şen المركز", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi No:1/1B Merkez / Karabük" },
+    { name: "صيدلية Kayabaşı المركز", loc: "Kayabaşı Mahallesi, Barbaros Caddesi No:30 Merkez / Karabük" },
+    { name: "صيدلية Levent المركز", loc: "Bayır Mahallesi, Bayır Sokak No:2/B Merkez / Karabük" },
+    { name: "صيدلية المركز المركز", loc: "Kurtuluş Mahallesi, Kurtuluş Caddesi No:23/B Merkez / Karabük" },
+    { name: "صيدلية Merve المركز", loc: "Yeşil Mahallesi, Taşkent Caddesi No:68/C Merkez / Karabük" },
+    { name: "صيدلية Müge المركز", loc: "Bayır Mahallesi, Fevzi Çakmak Caddesi No:37/A Merkez / Karabük" },
+    { name: "صيدلية Nurcan المركز", loc: "Şirinevler Mahallesi, Alparslan Caddesi, No:4/F Merkez / Karabük" },
+    { name: "صيدلية Ömür المركز", loc: "Bayır Mahallesi, Kemal Güneş Caddesi No:167/A Merkez / Karabük" },
+    { name: "صيدلية Özden المركز", loc: "Bayır Mahallesi, Sümer Caddesi No:35 Merkez / Karabük" },
+    { name: "صيدلية Öztürk المركز", loc: "Şirinevler Mahallesi, Alparslan Caddesi No:2/A Merkez / Karabük" },
+    { name: "صيدلية Pınar المركز", loc: "Bayır Mahallesi, Fevzi Çakmak Caddesi No:31/A Merkez / Karabük" },
+    { name: "صيدلية Salih Ayan المركز", loc: "Şirinevler Mahallesi, Şahinbey Caddesi No:2/B Merkez / Karabük" },
+    { name: "صيدلية Şenay المركز", loc: "Kayabaşı Mahallesi, Barbaros Caddesi No:45/C Merkez / Karabük" },
+    { name: "صيدلية Tuğba المركز", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, No:4 Merkez / Karabük" },
+    { name: "صيدلية Ülkü المركز", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, No:1 Merkez / Karabük" },
+    { name: "صيدلية Utkan المركز", loc: "Aydınlık Evler Mahallesi, 502.Sokak No:15/A Merkez / Karabük" },
+    { name: "صيدلية Vatan المركز", loc: "Bayır Mahallesi, Fevzi Çakmak Caddesi, No:10/A Merkez / Karabük" },
+    { name: "صيدلية Yeni Sağlık المركز", loc: "Şirinevler Mahallesi, İlhanlılar Caddesi, No:1/A Merkez / Karabük" },
+    { name: "صيدلية Yüksel المركز", loc: "Hürriyet Mahallesi, Zonguldak Caddesi, Çağrı İş Merkezi C-Blok No:30/K Merkez / Karabük" },
+    { name: "صيدلية 5000 Evler 100. Yıl", loc: "100.Yıl Mahallesi, Prof.Dr.Burhanettin Uysal Caddesi No:26-28/A Merkez / Karabük" },
+    { name: "صيدلية 5000 Evler Beşbinevler", loc: "Beşbinevler Mahallesi, 1.Cadde No:39 Merkez / Karabük (Eski Kadın Doğum Hastanesi altı)" },
+    { name: "صيدلية 5000 Evler Büşra", loc: "Beşbinevler Mahallesi, Şahin Tepesi No:18/A Merkez / Karabük" },
+    { name: "صيدلية 5000 Evler Canözü", loc: "5000 Evler Bahçelievler 74.Sokak No:3 Merkez / Karabük (Karabük Eğitim ve Araştırma Hastanesi 500 Evler Ek Bina yanı)" },
+    { name: "صيدلية 100.yil Doğa", loc: "100. Yıl Mahallesi, Karabük Kastamonu Yolu Üstü Sokak No:59/D Merkez / Karabük" },
+    { name: "صيدلية 100.yil Gökçınar", loc: "100.Yıl Mahallesi, 3 Nolu Cadde Bahçeşehir Sitesi A Blok No:4 Merkez / Karabük" },
+    { name: "صيدلية 5000 Evler Nilgün", loc: "5000 Evler Bahçelievler Mahallesi, 122.Sokak No:14AB Merkez / Karabük" },
+    { name: "صيدلية الجامعة (Üniversite)", loc: "Üniversite Mahallesi, Efsa Nur Sokak B-Blok No:1-A-B Merkez / Karabük (Özel Medikar Hastanesi yanı, Emniyet Müdürlüğü karşısı)" },
+    { name: "صيدلية 5000 Evler Uygar", loc: "Beşbinevler 75. Yıl Mahallesi, 31 Nolu Sokak No:4/B Merkez / Karabük" }
+
+            ]
         },
-        {
-            name: "صيدلية الأمل المركزية",
-            location: "حي الروضة، بجانب المستشفى العام",
-            openTime: 0,
-            closeTime: 24,
-            mapUrl: "https://maps.google.com"
+        tr: {
+            title: "Eczane Rehberi - HASTANE",
+            home: "Ana Sayfa",
+            heroH1: "Karabük Eczane Rehberi",
+            heroP: "En yakın eczaneyi ve güncel çalışma saatlerini bulun",
+            nobetciTitle: "Karabük Nöbetçi Eczaneleri",
+            statusOpen: "Şu An Açık",
+            statusClosed: "Şu An Kapalı",
+            statusNobetci: "Nöbetçi",
+            hoursLabel: "⏰ Çalışma Saatleri: ",
+            mapBtn: "Haritada Gör",
+            linkText: "Konum Linki",
+            dir: "ltr",
+            pharmacies: [
+                { name: "Merkez Akkaya Eczanesi", loc: " Şirinevler Mahallesi, Mehmet Akif Caddesi, Pınar Apt. No:20 Merkez / Karabük" },
+                { name: "Merkez Asuman Eczanesi ", loc: "Fevzi Fırat Caddesi, No:51/A Merkez / Karabük (İstasyon Mevkii-İşkur İl Müdürlüğü Hizmet Binası karşısı)" },
+                { name: "Merkez Atay Eczanesi", loc: "Fevzi Fırat Caddesi No:64/A Merkez / Karabük" },
+                { name: "Merkez Ayşe Abla Eczanesi", loc: "Şirinevler Mahallesi, Alpaslan Caddesi Sevim Apartmanı No:2/D Merkez / Karabük" },
+                { name: "Merkez Azim Eczanesi", loc: " Soğuksu Mahallesi, Oğuzlar Caddesi No:2 Merkez / Karabük (Soğuksu Aile Sağlığı Merkezi karşısı)" },
+                { name: "Merkez Birsen Eczanesi", loc: " Şirinevler Mahallesi, Mehmet Akif Caddesi, Pınar Apt. No:1 Merkez / Karabük (Şirinevler Eğitim Araştırma Hastanesi karşısı)" },
+                { name: "Merkez Bulut Eczanesi", loc: " Yeşil Mahalle, Esentepe Taşkent Caddesi No:78 Merkez / Karabük" },
+                { name: "Merkez Çağlayan Eczanesi", loc: " Hürriyet Caddesi, No:119 Merkez / Karabük" },
+                { name: "Merkez Derman Eczanesi", loc: " PTT Caddesi Havuzluhan No:25/B Merkez / Karabük" },
+                { name: "Merkez Dilek Eczanesi", loc: " Bayır Mahallesi, Fevzi Çakmak Caddesi No:9 Merkez / Karabük" },
+                { name: "Merkez Esentepe Eczanesi", loc: " Esentepe Mahallesi, Taşkent Caddesi Camialtı Sokak No:11 Merkez / Karabük" },
+                { name: "Merkez Güven Eczanesi", loc: " Yeşil Mahallesi, Bilgin Sokak No:15/A Merkez / Karabük" },
+                { name: "Merkez Hazar Eczanesi", loc: " Kayabaşı Mahallesi, Barbaros Caddesi No:10 Merkez / Karabük" },
+                { name: "Merkez İlkay Eczanesi", loc: " Şirinevler Mahallesi, İlhanlılar Caddesi, No:1/C Merkez / Karabük" },
+                { name: "Merkez İrem Eczanesi", loc: " Şirinevler Mahallesi, Alparslan Caddesi Sevim Apt No:2/B Merkez / Karabük" },
+                { name: "Merkez İstanbul Eczanesi", loc: " Şirinevler Mahallesi, Mehmet Akif Caddesi, Arslan Apt. No:3/13 Merkez / Karabük" },
+                { name: "Merkez Karabük Şen Eczanesi", loc: " Şirinevler Mahallesi, Mehmet Akif Caddesi No:1/1B Merkez / Karabük" },
+                { name: "Merkez Kayabaşı Eczanesi", loc: " Kayabaşı Mahallesi, Barbaros Caddesi No:30 Merkez / Karabük" },
+                { name: "Merkez Levent Eczanesi", loc: " Bayır Mahallesi, Bayır Sokak No:2/B Merkez / Karabük" },
+                { name: "Merkez Merkez Eczanesi", loc: " Kurtuluş Mahallesi, Kurtuluş Caddesi No:23/B Merkez / Karabük" },
+                { name: "Merkez Merve Eczanesi", loc: " Yeşil Mahallesi, Taşkent Caddesi No:68/C Merkez / Karabük" },
+                { name: "Merkez Müge Eczanesi", loc: " Bayır Mahallesi, Fevzi Çakmak Caddesi No:37/A Merkez / Karabük" },
+                { name: "Merkez Nurcan Eczanesi", loc: " Şirinevler Mahallesi, Alparslan Caddesi, No:4/F Merkez / Karabük" },
+                { name: "Merkez Ömür Eczanesi", loc: " Bayır Mahallesi, Kemal Güneş Caddesi No:167/A Merkez / Karabük" },
+                { name: "Merkez Özden Eczanesi", loc: " Bayır Mahallesi, Sümer Caddesi No:35 Merkez / Karabük" },
+                { name: "Merkez Öztürk Eczanesi", loc: " Şirinevler Mahallesi, Alparslan Caddesi No:2/A Merkez / Karabük" },
+                { name: "Merkez Pınar Eczanesi", loc: " Bayır Mahallesi, Fevzi Çakmak Caddesi No:31/A Merkez / Karabük" },
+                { name: "Merkez Salih Ayan Eczanesi", loc: " Şirinevler Mahallesi, Şahinbey Caddesi No:2/B Merkez / Karabük" },
+                { name: "Merkez Şenay Eczanesi", loc: " Kayabaşı Mahallesi, Barbaros Caddesi No:45/C Merkez / Karabük" },
+                { name: "Merkez Tuğba Eczanesi", loc: " Şirinevler Mahallesi, Mehmet Akif Caddesi, No:4 Merkez / Karabük" },
+                { name: "Merkez Ülkü Eczanesi", loc: " MeŞirinevler Mahallesi, Mehmet Akif Caddesi, No:1 Merkez / Karabükrkezi" },
+                { name: "Merkez Utkan Eczanesi", loc: " Aydınlık Evler Mahallesi, 502.Sokak No:15/A Merkez / Karabük" },
+                { name: "Merkez Vatan Eczanesi", loc: " Bayır Mahallesi, Fevzi Çakmak Caddesi, No:10/A Merkez / Karabük" },
+                { name: "Merkez Yeni Sağlık Eczanesi", loc: " Şirinevler Mahallesi, İlhanlılar Caddesi, No:1/A Merkez / Karabük" },
+                { name: "Merkez Yüksel Eczanesi", loc: " Hürriyet Mahallesi, Zonguldak Caddesi, Çağrı İş Merkezi C-Blok No:30/K Merkez / Karabük" },
+                { name: "5000 Evler 100. Yıl Eczanesi", loc: " 100.Yıl Mahallesi, Prof.Dr.Burhanettin Uysal Caddesi No:26-28/A Merkez / Karabük" },
+                { name: "5000 Evler Beşbinevler Eczanesi", loc: " Beşbinevler Mahallesi, 1.Cadde No:39 Merkez / Karabük (Eski Kadın Doğum Hastanesi altı)" },
+                { name: "5000 Evler Büşra Eczanesi", loc: " Beşbinevler Mahallesi, Şahin Tepesi No:18/A Merkez / Karabük" },
+                { name: "5000 Evler Canözü Eczanesi", loc: " 5000 Evler Bahçelievler 74.Sokak No:3 Merkez / Karabük (Karabük Eğitim ve Araştırma Hastanesi 500 Evler Ek Bina yanı)" },
+                { name: "100.yil Doğa Eczanesi", loc: " 100. Yıl Mahallesi, Karabük Kastamonu Yolu Üstü Sokak No:59/D Merkez / Karabük" },
+                { name: "100.yil Gökçınar Eczanesi", loc: " 100.Yıl Mahallesi, 3 Nolu Cadde Bahçeşehir Sitesi A Blok No:4 Merkez / Karabük" },
+                { name: "5000 Evler Nilgün Eczanesi", loc: " 5000 Evler Bahçelievler Mahallesi, 122.Sokak No:14AB Merkez / Karabük" },
+                { name: "Üniversite Eczanesi", loc: " Üniversite Mahallesi, Efsa Nur Sokak B-Blok No:1-A-B Merkez / Karabük (Özel Medikar Hastanesi yanı, Emniyet Müdürlüğü karşısı)" },
+                { name: "5000 Evler Uygar Eczanesi", loc: " Beşbinevler 75. Yıl Mahallesi, 31 Nolu Sokak No:4/B Merkez / Karabük" }
+                
+                
+                
+
+            ]
+        },
+        en: {
+            title: "Pharmacy Guide - HASTANE",
+            home: "Home",
+            heroH1: "Pharmacy Guide in Karabük",
+            heroP: "Find the nearest pharmacy and updated working hours",
+            nobetciTitle: "On-Duty Pharmacies in Karabük",
+            statusOpen: "Open Now",
+            statusClosed: "Closed Now",
+            statusNobetci: "On Duty",
+            hoursLabel: "⏰ Hours: ",
+            mapBtn: "View on Map",
+            linkText: "Location Link",
+            dir: "ltr",
+            pharmacies: [
+                
+    { name: "Merkez Akkaya Pharmacy", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, Pınar Apt. No:20 Merkez / Karabük" },
+    { name: "Merkez Asuman Pharmacy", loc: "Fevzi Fırat Caddesi, No:51/A Merkez / Karabük (İstasyon Mevkii-İşkur İl Müdürlüğü Hizmet Binası karşısı)" },
+    { name: "Merkez Atay Pharmacy", loc: "Fevzi Fırat Caddesi No:64/A Merkez / Karabük" },
+    { name: "Merkez Ayşe Abla Pharmacy", loc: "Şirinevler Mahallesi, Alpaslan Caddesi Sevim Apartmanı No:2/D Merkez / Karabük" },
+    { name: "Merkez Azim Pharmacy", loc: "Soğuksu Mahallesi, Oğuzlar Caddesi No:2 Merkez / Karabük (Soğuksu Aile Sağlığı Merkezi karşısı)" },
+    { name: "Merkez Birsen Pharmacy", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, Pınar Apt. No:1 Merkez / Karabük (Şirinevler Eğitim Araştırma Hastanesi karşısı)" },
+    { name: "Merkez Bulut Pharmacy", loc: "Yeşil Mahalle, Esentepe Taşkent Caddesi No:78 Merkez / Karabük" },
+    { name: "Merkez Çağlayan Pharmacy", loc: "Hürriyet Caddesi, No:119 Merkez / Karabük" },
+    { name: "Merkez Derman Pharmacy", loc: "PTT Caddesi Havuzluhan No:25/B Merkez / Karabük" },
+    { name: "Merkez Dilek Pharmacy", loc: "Bayır Mahallesi, Fevzi Çakmak Caddesi No:9 Merkez / Karabük" },
+    { name: "Merkez Esentepe Pharmacy", loc: "Esentepe Mahallesi, Taşkent Caddesi Camialtı Sokak No:11 Merkez / Karabük" },
+    { name: "Merkez Güven Pharmacy", loc: "Yeşil Mahallesi, Bilgin Sokak No:15/A Merkez / Karabük" },
+    { name: "Merkez Hazar Pharmacy", loc: "Kayabaşı Mahallesi, Barbaros Caddesi No:10 Merkez / Karabük" },
+    { name: "Merkez İlkay Pharmacy", loc: "Şirinevler Mahallesi, İlhanlılar Caddesi, No:1/C Merkez / Karabük" },
+    { name: "Merkez İrem Pharmacy", loc: "Şirinevler Mahallesi, Alparslan Caddesi Sevim Apt No:2/B Merkez / Karabük" },
+    { name: "Merkez İstanbul Pharmacy", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, Arslan Apt. No:3/13 Merkez / Karabük" },
+    { name: "Merkez Karabük Şen Pharmacy", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi No:1/1B Merkez / Karabük" },
+    { name: "Merkez Kayabaşı Pharmacy", loc: "Kayabaşı Mahallesi, Barbaros Caddesi No:30 Merkez / Karabük" },
+    { name: "Merkez Levent Pharmacy", loc: "Bayır Mahallesi, Bayır Sokak No:2/B Merkez / Karabük" },
+    { name: "Merkez Merkez Pharmacy", loc: "Kurtuluş Mahallesi, Kurtuluş Caddesi No:23/B Merkez / Karabük" },
+    { name: "Merkez Merve Pharmacy", loc: "Yeşil Mahallesi, Taşkent Caddesi No:68/C Merkez / Karabük" },
+    { name: "Merkez Müge Pharmacy", loc: "Bayır Mahallesi, Fevzi Çakmak Caddesi No:37/A Merkez / Karabük" },
+    { name: "Merkez Nurcan Pharmacy", loc: "Şirinevler Mahallesi, Alparslan Caddesi, No:4/F Merkez / Karabük" },
+    { name: "Merkez Ömür Pharmacy", loc: "Bayır Mahallesi, Kemal Güneş Caddesi No:167/A Merkez / Karabük" },
+    { name: "Merkez Özden Pharmacy", loc: "Bayır Mahallesi, Sümer Caddesi No:35 Merkez / Karabük" },
+    { name: "Merkez Öztürk Pharmacy", loc: "Şirinevler Mahallesi, Alparslan Caddesi No:2/A Merkez / Karabük" },
+    { name: "Merkez Pınar Pharmacy", loc: "Bayır Mahallesi, Fevzi Çakmak Caddesi No:31/A Merkez / Karabük" },
+    { name: "Merkez Salih Ayan Pharmacy", loc: "Şirinevler Mahallesi, Şahinbey Caddesi No:2/B Merkez / Karabük" },
+    { name: "Merkez Şenay Pharmacy", loc: "Kayabaşı Mahallesi, Barbaros Caddesi No:45/C Merkez / Karabük" },
+    { name: "Merkez Tuğba Pharmacy", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, No:4 Merkez / Karabük" },
+    { name: "Merkez Ülkü Pharmacy", loc: "Şirinevler Mahallesi, Mehmet Akif Caddesi, No:1 Merkez / Karabük" },
+    { name: "Merkez Utkan Pharmacy", loc: "Aydınlık Evler Mahallesi, 502.Sokak No:15/A Merkez / Karabük" },
+    { name: "Merkez Vatan Pharmacy", loc: "Bayır Mahallesi, Fevzi Çakmak Caddesi, No:10/A Merkez / Karabük" },
+    { name: "Merkez Yeni Sağlık Pharmacy", loc: "Şirinevler Mahallesi, İlhanlılar Caddesi, No:1/A Merkez / Karabük" },
+    { name: "Merkez Yüksel Pharmacy", loc: "Hürriyet Mahallesi, Zonguldak Caddesi, Çağrı İş Merkezi C-Blok No:30/K Merkez / Karabük" },
+    { name: "5000 Evler 100. Yıl Pharmacy", loc: "100.Yıl Mahallesi, Prof.Dr.Burhanettin Uysal Caddesi No:26-28/A Merkez / Karabük" },
+    { name: "5000 Evler Beşbinevler Pharmacy", loc: "Beşbinevler Mahallesi, 1.Cadde No:39 Merkez / Karabük (Eski Kadın Doğum Hastanesi altı)" },
+    { name: "5000 Evler Büşra Pharmacy", loc: "Beşbinevler Mahallesi, Şahin Tepesi No:18/A Merkez / Karabük" },
+    { name: "5000 Evler Canözü Pharmacy", loc: "5000 Evler Bahçelievler 74.Sokak No:3 Merkez / Karabük (Karabük Eğitim ve Araştırma Hastanesi 500 Evler Ek Bina yanı)" },
+    { name: "100.yil Doğa Pharmacy", loc: "100. Yıl Mahallesi, Karabük Kastamonu Yolu Üست Sokak No:59/D Merkez / Karabük" },
+    { name: "100.yil Gökçınar Pharmacy", loc: "100.Yıl Mahallesi, 3 Nolu Cadde Bahçeşehir Sitesi A Blok No:4 Merkez / Karabük" },
+    { name: "5000 Evler Nilgün Pharmacy", loc: "5000 Evler Bahçelievler Mahallesi, 122.Sokak No:14AB Merkez / Karabük" },
+    { name: "Üniversite Pharmacy", loc: "Üniversite Mahallesi, Efsa Nur Sokak B-Blok No:1-A-B Merkez / Karabük (Özel Medikar Hastanesi yanı, Emniyet Müdürlüğü karşısı)" },
+    { name: "5000 Evler Uygar Pharmacy", loc: "Beşbinevler 75. Yıl Mahallesi, 31 Nolu Sokak No:4/B Merkez / Karabük" }
+
+            ]
         }
+    };
+
+    const staticData = [
+        { openTime: 8, closeTime: 23, mapUrl: "https://maps.app.goo.gl/byPNAD4vtCEMxBN49" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/d2g7uvMb3UaTa9Wn7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/ATXu7nU9JqHMJ23r9" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/YPFqA2dbwaFmVgqb7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/N6RhpkUH2Eo5qSW1A" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/9LZ8i3uetgnD8HXQ8" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/RU8sR9HbtToANAEN7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/WcUp45VbrMa1SvKr8" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/te5JjN5SQZQQpQz76" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/cHztGoneDWPHYnbk6" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/6hVrBA8Ydo8TW2QN6" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/omSkcDeUDHKWGwMm7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/usmG5viUPrdaLoJWA" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/BBntLZ7hQ2rZ1iaa7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/6EDNf29JtEL96EiK6" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/tMLpaxQsMW8Etk2UA" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/9rjWyxwH9bpN7cY3A" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/hkPqhvfuwheidCi9A" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/iJ67bZ7GREWRaYAHA" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/nnjA5JKkWNRKzAhz5" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/kNW4US6X9D7DXbvh9" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/sGpwpzY5uh8JBW9y7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/ftEHHfX3TmNvkwGn9" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/DNSsUAKtzA5Uqwmz7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/KFqtpoFiShSaBsad9" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/5Mc4JSaNtVwWcwHW7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/TYD96TBQDNt88yK5A" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/Ay32RtbzNNGZuDSf8" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/j1SnRrPRinTBRZvb9" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/UbaMfFqq3BZuSzTW8" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/J8HVXW65Adensmgr9" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/mShqgXEJd1Pmexz16" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/J5ViFSyLddQHJhHw7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/cMwp2AcjKcsGx95GA" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/BvmPDazuzFtSfL166" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/JGNi1vQJwPqTX4Mg6" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/dFsebhJmuiWEZEKA9" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/JifZXV9tmQFkb1vu5" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/ex1Jdnh5YKZsFEfHA" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/pzKRcSVZJpbRWL2J9" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/xX4NWpHYpXGBW3ux5" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/56UXs4YCDNegGsT79" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/mBXQ5xMXahCYXrXH7" },
+        { openTime: 8, closeTime: 15, mapUrl: "https://maps.app.goo.gl/eN4pupjVutFtsXpq8" }
     ];
 
-    function renderPharmacies() {
+    function setLanguage(lang) {
+        localStorage.setItem('lang', lang);
+        const t = translations[lang];
+        const html = document.getElementById('main-html');
+        html.lang = lang;
+        html.dir = t.dir;
+
+        document.getElementById('page-title').innerText = t.title;
+        document.getElementById('nav-home').innerText = t.home;
+        document.getElementById('hero-h1').innerText = t.heroH1;
+        document.getElementById('hero-p').innerText = t.heroP;
+
+        loadLivePharmacies(lang);
+    }
+
+    function loadLivePharmacies(lang) {
         const listContainer = document.getElementById('pharmacyList');
         const currentHour = new Date().getHours();
+        const t = translations[lang];
 
-        // الاستماع للصيدلية المناوبة من Firebase (Live)
         db.collection("settings").doc("pharmacy").onSnapshot((doc) => {
             listContainer.innerHTML = ""; 
 
-            // إضافة كرت الصيدلية المناوبة أولاً بتصميم مميز
+            // 1. عرض الصيدلية المناوبة من Firebase
             if (doc.exists) {
                 const data = doc.data();
                 listContainer.innerHTML += `
                     <div class="pharmacy-card nobetci-card">
                         <span class="nobetci-star">🌟</span>
-                        <h3>Karabük Nöbetçi Eczaneleri</h3>
-                        <p class="info"><strong></strong> ${data.name}</p>
-                        <p class="info">📍</p>
-                        <span class="status-badge open"> Nöbetçi </span>
-                        <a href="${data.location}" target="_blank" class="btn-map"> link </a>
+                        <h3>${t.nobetciTitle}</h3>
+                        <p class="info"><strong>🏢</strong> ${data.name}</p>
+                        <span class="status-badge nobetci-badge">${t.statusNobetci}</span>
+                        <a href="${data.location}" target="_blank" class="btn-map">${t.linkText} 📍</a>
                     </div>
                 `;
             }
 
-            // إضافة الصيدليات العادية
-            pharmacies.forEach(pharmacy => {
-                const isOpen = (pharmacy.openTime === 0 && pharmacy.closeTime === 24) || 
-                               (currentHour >= pharmacy.openTime && currentHour < pharmacy.closeTime);
+            // 2. عرض الصيدليات الثابتة المترجمة
+            t.pharmacies.forEach((pharmacy, index) => {
+                const hours = staticData[index];
+                const isOpen = (hours.openTime === 0 && hours.closeTime === 24) || 
+                               (currentHour >= hours.openTime && currentHour < hours.closeTime);
                 
-                const statusText = isOpen ? "مفتوح الآن" : "مغلق حالياً";
+                const statusText = isOpen ? t.statusOpen : t.statusClosed;
                 const statusClass = isOpen ? "open" : "closed";
 
                 listContainer.innerHTML += `
                     <div class="pharmacy-card">
                         <h3>${pharmacy.name}</h3>
-                        <p class="info">📍 ${pharmacy.location}</p>
-                        <p class="info">⏰ المواعيد: ${pharmacy.openTime}:00 - ${pharmacy.closeTime}:00</p>
+                        <p class="info">📍 ${pharmacy.loc}</p>
+                        <p class="info">${t.hoursLabel} ${hours.openTime}:00 - ${hours.closeTime}:00</p>
                         <span class="status-badge ${statusClass}">${statusText}</span>
-                        <a href="${pharmacy.mapUrl}" target="_blank" class="btn-map">عرض على الخريطة</a>
+                        <a href="${hours.mapUrl}" target="_blank" class="btn-map">${t.mapBtn}</a>
                     </div>
                 `;
             });
         });
     }
 
-    renderPharmacies();
+    const savedLang = localStorage.getItem('lang') || 'ar';
+    setLanguage(savedLang);
 </script>
 
 </body>
-
 </html>
-
-
-
