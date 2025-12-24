@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="main-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - HASTANE</title>
+    <title id="page-title">تسجيل الدخول - HASTANE</title>
     <style>
         :root { --primary: #1b4332; --bg: #f8f9fa; }
         body { 
@@ -15,7 +15,14 @@
             height: 100vh; 
             margin: 0; 
             flex-direction: column;
+            transition: 0.3s;
         }
+        
+        /* أزرار اللغة */
+        .lang-switcher { display: flex; gap: 5px; margin-bottom: 20px; }
+        .lang-btn { cursor: pointer; border: 1px solid #ddd; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; background: #fff; font-weight: bold; }
+        .lang-btn:hover { background: #d8f3dc; }
+
         .login-card { 
             background: white; 
             padding: 40px; 
@@ -41,9 +48,15 @@
 </head>
 <body>
 
+<div class="lang-switcher">
+    <button class="lang-btn" onclick="setLanguage('ar')">AR</button>
+    <button class="lang-btn" onclick="setLanguage('tr')">TR</button>
+    <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+</div>
+
 <div class="login-card">
     <div class="logo-area">🏥 HASTANE</div>
-    <h3 style="color: #333; margin-bottom: 20px;">دخول الموظفين</h3>
+    <h3 id="staff-header" style="color: #333; margin-bottom: 20px;">دخول الموظفين</h3>
     
     <input type="email" id="email" placeholder="البريد الإلكتروني">
     <input type="password" id="password" placeholder="كلمة المرور">
@@ -53,13 +66,12 @@
     <button id="loginBtn" onclick="login()">دخول</button>
 </div>
 
-<a href="index.html" class="back-link">← العودة للصفحة الرئيسية</a>
+<a href="index.html" class="back-link" id="back-link">← العودة للصفحة الرئيسية</a>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <script>
-  // إعدادات Firebase الموحدة
   const firebaseConfig = {
     apiKey: "AIzaSyBD2Ge6v0TStampv_l_bRGnzTDVPKvCW20",
     authDomain: "hastane-b2c48.firebaseapp.com",
@@ -72,24 +84,83 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
+  // قاموس اللغات
+  const translations = {
+    ar: {
+        title: "تسجيل الدخول - HASTANE",
+        staffHeader: "دخول الموظفين",
+        email: "البريد الإلكتروني",
+        pass: "كلمة المرور",
+        loginBtn: "دخول",
+        error: "خطأ في البريد أو كلمة المرور!",
+        back: "← العودة للصفحة الرئيسية",
+        check: "جاري التحقق...",
+        alert: "الرجاء إدخال البيانات كاملة",
+        dir: "rtl"
+    },
+    tr: {
+        title: "Giriş Yap - HASTANE",
+        staffHeader: "Personel Girişi",
+        email: "E-posta",
+        pass: "Şifre",
+        loginBtn: "Giriş Yap",
+        error: "Hatalı e-posta veya şifre!",
+        back: "← Ana Sayfaya Dön",
+        check: "Kontrol ediliyor...",
+        alert: "Lütfen tüm bilgileri doldurun",
+        dir: "ltr"
+    },
+    en: {
+        title: "Login - HASTANE",
+        staffHeader: "Staff Login",
+        email: "Email Address",
+        pass: "Password",
+        loginBtn: "Login",
+        error: "Invalid email or password!",
+        back: "← Back to Home Page",
+        check: "Verifying...",
+        alert: "Please fill in all fields",
+        dir: "ltr"
+    }
+  };
+
+  function setLanguage(lang) {
+      localStorage.setItem('lang', lang);
+      const t = translations[lang];
+      const html = document.getElementById('main-html');
+      
+      html.dir = t.dir;
+      html.lang = lang;
+      
+      document.getElementById('page-title').innerText = t.title;
+      document.getElementById('staff-header').innerText = t.staffHeader;
+      document.getElementById('email').placeholder = t.email;
+      document.getElementById('password').placeholder = t.pass;
+      document.getElementById('loginBtn').innerText = t.loginBtn;
+      document.getElementById('errorMsg').innerText = t.error;
+      document.getElementById('back-link').innerText = t.back;
+  }
+
   function login() {
+      const lang = localStorage.getItem('lang') || 'ar';
+      const t = translations[lang];
+      
       const email = document.getElementById('email').value;
       const pass = document.getElementById('password').value;
       const btn = document.getElementById('loginBtn');
       const errorMsg = document.getElementById('errorMsg');
 
       if(!email || !pass) {
-          alert("الرجاء إدخال البيانات كاملة");
+          alert(t.alert);
           return;
       }
 
       btn.disabled = true;
-      btn.innerText = "جاري التحقق...";
+      btn.innerText = t.check;
       errorMsg.style.display = 'none';
 
       auth.signInWithEmailAndPassword(email, pass)
           .then((userCredential) => {
-              // توجيه ذكي بناءً على الإيميل
               if(email.includes("admin")) {
                   localStorage.setItem('role', 'admin');
                   location.href = 'dashboard-admin.html';
@@ -101,9 +172,13 @@
           .catch((error) => {
               errorMsg.style.display = 'block';
               btn.disabled = false;
-              btn.innerText = "دخول";
+              btn.innerText = t.loginBtn;
           });
   }
+
+  // تشغيل اللغة المحفوظة أو العربية افتراضياً
+  const savedLang = localStorage.getItem('lang') || 'ar';
+  setLanguage(savedLang);
 </script>
 </body>
 </html>
