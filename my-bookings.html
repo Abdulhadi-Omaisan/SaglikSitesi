@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="main-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حجوزاتي - HASTANE</title>
+    <title id="page-title">حجوزاتي - HASTANE</title>
     <style>
         :root { 
             --primary: #1b4332; 
@@ -19,6 +19,7 @@
             margin: 0; 
             background-color: var(--bg); 
             color: #333; 
+            transition: 0.3s;
         }
 
         header { 
@@ -31,11 +32,17 @@
             position: sticky; top: 0; z-index: 1000;
         }
         .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; align-items: center; gap: 10px; }
         .nav-links a { text-decoration: none; color: var(--primary); font-weight: 600; padding: 8px 15px; border-radius: 8px; transition: 0.3s; }
         .nav-links a:hover { background: var(--accent); }
 
+        /* أزرار اللغة */
+        .lang-switcher { display: flex; gap: 5px; margin: 0 10px; }
+        .lang-btn { cursor: pointer; border: 1px solid #ddd; padding: 5px 8px; border-radius: 5px; font-size: 0.75rem; background: #fff; font-weight: bold; }
+        .lang-btn:hover { background: var(--accent); }
+
         .container { max-width: 700px; margin: 50px auto; padding: 0 20px; }
-        .section-title { text-align: center; color: var(--primary); margin-bottom: 30px; }
+        .section-title { text-align: center; color: var(--primary); margin-bottom: 30px; font-weight: 800; }
 
         .booking-card { 
             background: var(--white); 
@@ -47,6 +54,7 @@
             position: relative;
             transition: 0.3s;
         }
+        [dir="ltr"] .booking-card { border-right: none; border-left: 8px solid var(--primary); }
 
         .booking-card h3 { color: var(--primary); margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         
@@ -98,15 +106,20 @@
 <header>
     <a href="index.html" class="logo">HASTANE</a>
     <nav class="nav-links">
-        <a href="index.html">الرئيسية</a>
-        <a href="booking.html">حجز موعد</a>
+        <div class="lang-switcher">
+            <button class="lang-btn" onclick="setLanguage('ar')">AR</button>
+            <button class="lang-btn" onclick="setLanguage('tr')">TR</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+        <a href="index.html" id="nav-home">الرئيسية</a>
+        <a href="booking.html" id="nav-booking">حجز موعد</a>
     </nav>
 </header>
 
 <div class="container">
-    <h2 class="section-title">مواعيدك الطبية</h2>
+    <h2 class="section-title" id="section-title">مواعيدك الطبية</h2>
     <div id="bookingsList">
-        <p style="text-align:center;">جاري تحميل مواعيدك...</p>
+        <p style="text-align:center;" id="loading-text">جاري تحميل مواعيدك...</p>
     </div>
 </div>
 
@@ -126,69 +139,161 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // جلب الحجوزات بشكل مباشر
-    db.collection("bookings").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
-        const container = document.getElementById('bookingsList');
-        
-        if (snapshot.empty) {
-            container.innerHTML = `
-                <div class="no-data">
-                    <p>لا توجد لديك حجوزات حالياً.</p>
-                    <a href="booking.html" style="color:var(--primary); text-decoration:none; font-weight:bold;">إضغط هنا لحجز موعدك الأول</a>
-                </div>`;
-            return;
+    const translations = {
+        ar: {
+            title: "حجوزاتي - HASTANE",
+            navHome: "الرئيسية",
+            navBooking: "حجز موعد",
+            sectionTitle: "مواعيدك الطبية",
+            loading: "جاري تحميل مواعيدك...",
+            noData: "لا توجد لديك حجوزات حالياً.",
+            bookNow: "إضغط هنا لحجز موعدك الأول",
+            cardHeader: "موعد مؤكد",
+            lblPatient: "المريض:",
+            lblDoctor: "الدكتور:",
+            lblTime: "الساعة:",
+            lblOffice: "الموقع:",
+            officeDefault: "مكتب الاستقبال",
+            status: "الحالة: نشط ✅",
+            btnCancel: "إلغاء الحجز",
+            confirmMsg: "هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟ لا يمكن التراجع عن هذه الخطوة.",
+            successMsg: "تم إلغاء الموعد بنجاح. تم فتح الساعة لمرضى آخرين.",
+            errorMsg: "حدث خطأ أثناء محاولة الإلغاء، يرجى المحاولة لاحقاً.",
+            dir: "rtl"
+        },
+        tr: {
+            title: "Randevularım - HASTANE",
+            navHome: "Ana Sayfa",
+            navBooking: "Randevu Al",
+            sectionTitle: "Tıbbi Randevularınız",
+            loading: "Randevularınız yükleniyor...",
+            noData: "Şu an kayıtlı randevunuz bulunmamaktadır.",
+            bookNow: "İlk randevunuzu almak için buraya tıklayın",
+            cardHeader: "Onaylanmış Randevu",
+            lblPatient: "Hasta:",
+            lblDoctor: "Doktor:",
+            lblTime: "Saat:",
+            lblOffice: "Konum:",
+            officeDefault: "Resepsiyon",
+            status: "Durum: Aktif ✅",
+            btnCancel: "Randevuyu İptal Et",
+            confirmMsg: "Bu randevuyu iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+            successMsg: "Randevu başarıyla iptal edildi. Saat diğer hastalar için açıldı.",
+            errorMsg: "İptal işlemi sırasında bir hata oluştu, lütfen daha sonra tekrar deneyin.",
+            dir: "ltr"
+        },
+        en: {
+            title: "My Bookings - HASTANE",
+            navHome: "Home",
+            navBooking: "Book Appointment",
+            sectionTitle: "Your Medical Appointments",
+            loading: "Loading your appointments...",
+            noData: "You have no current bookings.",
+            bookNow: "Click here to book your first appointment",
+            cardHeader: "Confirmed Appointment",
+            lblPatient: "Patient:",
+            lblDoctor: "Doctor:",
+            lblTime: "Time:",
+            lblOffice: "Location:",
+            officeDefault: "Reception Desk",
+            status: "Status: Active ✅",
+            btnCancel: "Cancel Appointment",
+            confirmMsg: "Are you sure you want to cancel this appointment? This action cannot be undone.",
+            successMsg: "Appointment cancelled successfully. The slot is now open for other patients.",
+            errorMsg: "An error occurred during cancellation, please try again later.",
+            dir: "ltr"
         }
+    };
 
-        container.innerHTML = "";
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const bookingId = doc.id; // نحتاج الـ ID للحذف
+    function setLanguage(lang) {
+        localStorage.setItem('lang', lang);
+        const t = translations[lang];
+        const html = document.getElementById('main-html');
+        html.lang = lang;
+        html.dir = t.dir;
 
-            container.innerHTML += `
-                <div class="booking-card" id="card-${bookingId}">
-                    <h3>موعد مؤكد</h3>
-                    
-                    <div class="detail-row">
-                        <span class="label">المريض:</span>
-                        <span class="value">${data.patient}</span>
+        document.getElementById('page-title').innerText = t.title;
+        document.getElementById('nav-home').innerText = t.navHome;
+        document.getElementById('nav-booking').innerText = t.navBooking;
+        document.getElementById('section-title').innerText = t.sectionTitle;
+        if(document.getElementById('loading-text')) {
+            document.getElementById('loading-text').innerText = t.loading;
+        }
+        
+        loadBookings(lang);
+    }
+
+    function loadBookings(lang) {
+        const t = translations[lang];
+        db.collection("bookings").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+            const container = document.getElementById('bookingsList');
+            
+            if (snapshot.empty) {
+                container.innerHTML = `
+                    <div class="no-data">
+                        <p>${t.noData}</p>
+                        <a href="booking.html" style="color:var(--primary); text-decoration:none; font-weight:bold;">${t.bookNow}</a>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = "";
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const bookingId = doc.id;
+
+                container.innerHTML += `
+                    <div class="booking-card" id="card-${bookingId}">
+                        <h3>${t.cardHeader}</h3>
+                        
+                        <div class="detail-row">
+                            <span class="label">${t.lblPatient}</span>
+                            <span class="value">${data.patient}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">${t.lblDoctor}</span>
+                            <span class="value">${data.doctor}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">${t.lblTime}</span>
+                            <span class="value">${data.time}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">${t.lblOffice}</span>
+                            <span class="value">${data.office || t.officeDefault}</span>
+                        </div>
+
+                        <div class="card-footer">
+                            <span class="status-badge">${t.status}</span>
+                            <button class="btn-delete" onclick="cancelBooking('${bookingId}')">${t.btnCancel}</button>
+                        </div>
                     </div>
-
-                    <div class="detail-row">
-                        <span class="label">الدكتور:</span>
-                        <span class="value">${data.doctor}</span>
-                    </div>
-
-                    <div class="detail-row">
-                        <span class="label">الساعة:</span>
-                        <span class="value">${data.time}</span>
-                    </div>
-
-                    <div class="detail-row">
-                        <span class="label">الموقع:</span>
-                        <span class="value">${data.office || 'مكتب الاستقبال'}</span>
-                    </div>
-
-                    <div class="card-footer">
-                        <span class="status-badge">الحالة: نشط ✅</span>
-                        <button class="btn-delete" onclick="cancelBooking('${bookingId}')">إلغاء الحجز</button>
-                    </div>
-                </div>
-            `;
+                `;
+            });
         });
-    });
+    }
 
-    // وظيفة إلغاء الحجز
     async function cancelBooking(id) {
-        if (confirm("هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟ لا يمكن التراجع عن هذه الخطوة.")) {
+        const lang = localStorage.getItem('lang') || 'ar';
+        const t = translations[lang];
+
+        if (confirm(t.confirmMsg)) {
             try {
                 await db.collection("bookings").doc(id).delete();
-                alert("تم إلغاء الموعد بنجاح. تم فتح الساعة لمرضى آخرين.");
+                alert(t.successMsg);
             } catch (error) {
-                alert("حدث خطأ أثناء محاولة الإلغاء، يرجى المحاولة لاحقاً.");
+                alert(t.errorMsg);
                 console.error("Error deleting document: ", error);
             }
         }
     }
+
+    // تشغيل اللغة المحفوظة أو العربية افتراضياً
+    const savedLang = localStorage.getItem('lang') || 'ar';
+    setLanguage(savedLang);
 </script>
 
 </body>
