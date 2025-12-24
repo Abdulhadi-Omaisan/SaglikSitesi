@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="main-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حجز موعد رسمي - HASTANE</title>
+    <title id="page-title">حجز موعد رسمي - HASTANE</title>
     <style>
         :root { 
             --primary: #1b4332; 
@@ -18,9 +18,9 @@
             margin: 0; 
             background-color: var(--bg); 
             color: #333; 
+            transition: 0.3s;
         }
 
-        /* الهيدر الموحد */
         header { 
             background: var(--white); 
             padding: 15px 8%; 
@@ -31,16 +31,16 @@
             position: sticky; top: 0; z-index: 1000;
         }
         .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; align-items: center; gap: 10px; }
         .nav-links a { text-decoration: none; color: var(--primary); font-weight: 600; padding: 8px 15px; border-radius: 8px; transition: 0.3s; }
         .nav-links a:hover { background: var(--accent); }
 
-        /* حاوية الحجز */
-        .main-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 0 20px;
-        }
+        /* أزرار اللغة */
+        .lang-switcher { display: flex; gap: 5px; margin: 0 10px; }
+        .lang-btn { cursor: pointer; border: 1px solid #ddd; padding: 5px 8px; border-radius: 5px; font-size: 0.75rem; background: #fff; font-weight: bold; }
+        .lang-btn:hover { background: var(--accent); }
 
+        .main-container { max-width: 600px; margin: 50px auto; padding: 0 20px; }
         .booking-card { 
             background: var(--white); 
             padding: 40px; 
@@ -50,38 +50,24 @@
         }
 
         h2 { color: var(--primary); text-align: center; margin-bottom: 30px; font-weight: 800; }
-        
         label { display: block; margin: 15px 5px 5px; font-weight: 600; color: var(--primary); }
-        
         input, select, button { 
             width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; 
             border: 1px solid #ddd; box-sizing: border-box; font-size: 1rem; transition: 0.3s;
         }
-
         input:focus, select:focus { border-color: var(--secondary); outline: none; box-shadow: 0 0 8px rgba(27, 67, 50, 0.1); }
 
         .office-badge {
-            background: var(--accent);
-            color: var(--primary);
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            display: none;
-            text-align: center;
+            background: var(--accent); color: var(--primary); padding: 10px;
+            border-radius: 10px; font-size: 0.9rem; font-weight: bold;
+            margin-bottom: 20px; display: none; text-align: center;
         }
 
-        /* جدول الساعات */
-        .time-grid { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; 
-        }
-
+        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
         .time-slot { 
             padding: 12px; background: #fdfdfd; border: 1px solid #eee; border-radius: 10px; 
             cursor: pointer; text-align: center; font-weight: bold; transition: 0.2s;
         }
-
         .time-slot:hover:not(.busy) { border-color: var(--secondary); background: var(--accent); }
         .time-slot.selected { background: var(--primary); color: white; border-color: var(--primary); }
         .time-slot.busy { background: #f1f1f1; color: #ccc; cursor: not-allowed; text-decoration: line-through; }
@@ -91,42 +77,52 @@
             margin-top: 30px; cursor: pointer; font-size: 1.1rem; height: 55px;
         }
         .btn-confirm:hover { background: var(--secondary); transform: translateY(-2px); }
-        
         .hidden { display: none; }
     </style>
 </head>
-<body>
+<body id="body-tag">
 
 <header>
     <a href="index.html" class="logo">HASTANE</a>
     <nav class="nav-links">
-        <a href="index.html">الرئيسية</a>
-        <a href="my-bookings.html">حجوزاتي</a>
+        <div class="lang-switcher">
+            <button class="lang-btn" onclick="setLanguage('ar')">AR</button>
+            <button class="lang-btn" onclick="setLanguage('tr')">TR</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+        <a href="index.html" id="nav-home">الرئيسية</a>
+        <a href="my-bookings.html" id="nav-bookings">حجوزاتي</a>
     </nav>
 </header>
 
 <div class="main-container">
     <div class="booking-card">
-        <h2>تأكيد موعد طبي</h2>
+        <h2 id="form-title">تأكيد موعد طبي</h2>
         
-        <label>البيانات الشخصية</label>
+        <label id="lbl-personal">البيانات الشخصية</label>
         <input type="text" id="pName" placeholder="الاسم الكامل للمريض">
         <input type="number" id="pID" placeholder="الرقم الوطني (T.C. No)">
         
-        <label>القسم الطبي</label>
+        <label id="lbl-dept">القسم الطبي</label>
         <select id="dept" onchange="loadDocs()">
-            <option value="">-- اختر القسم --</option>
-            <option value="العيون">العيون (Göz)</option>
-            <option value="الأطفال">الأطفال (Çocuk)</option>
+            <option value="" id="opt-dept-default">-- اختر القسم --</option>
+            <option value="العيون" id="opt-eye"> العيون </option>
+            <option value="الأطفال" id="opt-child"> الأطفال</option>
+            <option value="العيون" id="opt-eye"> انف واذن و حنجره </option>
+            <option value="الأطفال" id="opt-child"> نساء و ولاده </option>
+            <option value="العيون" id="opt-eye"> علاج طبيعي </option>
+            <option value="الأطفال" id="opt-child"> باطنية </option>
+            <option value="العيون" id="opt-eye"> مخ واعصاب </option>
+            <option value="الأطفال" id="opt-child"> عظام </option>
         </select>
 
-        <label class="doc-label hidden">الطبيب المتاح</label>
+        <label class="doc-label hidden" id="lbl-doctor">الطبيب المتاح</label>
         <select id="docList" class="hidden" onchange="loadAvailableTimes()"></select>
         
         <div id="officeInfo" class="office-badge"></div>
 
         <div id="timeSection" class="hidden">
-            <label>اختر الساعة المناسبة</label>
+            <label id="lbl-time">اختر الساعة المناسبة</label>
             <div class="time-grid" id="timeGrid"></div>
             <input type="hidden" id="selectedTime">
         </div>
@@ -149,6 +145,96 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    const translations = {
+        ar: {
+            title: "حجز موعد رسمي - HASTANE",
+            home: "الرئيسية",
+            bookings: "حجوزاتي",
+            formTitle: "تأكيد موعد طبي",
+            personal: "البيانات الشخصية",
+            pName: "الاسم الكامل للمريض",
+            pID: "الرقم الوطني (T.C. No)",
+            dept: "الالقسم الطبي",
+            deptDefault: "-- اختر القسم --",
+            eye: "العيون ",
+            child: "الأطفال ",
+            doctor: "الطبيب المتاح",
+            docDefault: "-- اختر الطبيب --",
+            time: "اختر الساعة المناسبة",
+            confirm: "تأكيد الحجز النهائي",
+            officePrefix: "📍 موقع العيادة: ",
+            success: "✅ تم تأكيد حجزك بنجاح!",
+            error: "الرجاء إكمال كافة البيانات واختيار الساعة",
+            dir: "rtl"
+        },
+        tr: {
+            title: "Resmi Randevu Al - HASTANE",
+            home: "Ana Sayfa",
+            bookings: "Randevularım",
+            formTitle: "Tıbbi Randevu Onayı",
+            personal: "Kişisel Bilgiler",
+            pName: "Hastanın Tam Adı",
+            pID: "T.C. Kimlik No",
+            dept: "Tıbbi Bölüm",
+            deptDefault: "-- Bölüm Seçiniz --",
+            eye: "Göz ",
+            child: "Çocuk ",
+            doctor: "Uygun Doktor",
+            docDefault: "-- Doktor Seçiniz --",
+            time: "Uygun Saati Seçiniz",
+            confirm: "Randevuyu Onayla",
+            officePrefix: "📍 Klinik Konumu: ",
+            success: "✅ Randevunuz başarıyla onaylandı!",
+            error: "Lütfen tüm bilgileri doldurun ve saat seçin",
+            dir: "ltr"
+        },
+        en: {
+            title: "Official Appointment Booking - HASTANE",
+            home: "Home",
+            bookings: "My Bookings",
+            formTitle: "Medical Appointment Confirmation",
+            personal: "Personal Information",
+            pName: "Patient's Full Name",
+            pID: "National ID (T.C. No)",
+            dept: "Medical Department",
+            deptDefault: "-- Choose Department --",
+            eye: "Ophthalmology ",
+            child: "Pediatrics ",
+            doctor: "Available Doctor",
+            docDefault: "-- Choose Doctor --",
+            time: "Choose Suitable Time",
+            confirm: "Confirm Final Booking",
+            officePrefix: "📍 Clinic Location: ",
+            success: "✅ Your appointment has been confirmed successfully!",
+            error: "Please complete all data and select a time",
+            dir: "ltr"
+        }
+    };
+
+    function setLanguage(lang) {
+        localStorage.setItem('lang', lang);
+        const html = document.getElementById('main-html');
+        const t = translations[lang];
+        
+        html.lang = lang;
+        html.dir = t.dir;
+        
+        document.getElementById('page-title').innerText = t.title;
+        document.getElementById('nav-home').innerText = t.home;
+        document.getElementById('nav-bookings').innerText = t.bookings;
+        document.getElementById('form-title').innerText = t.formTitle;
+        document.getElementById('lbl-personal').innerText = t.personal;
+        document.getElementById('pName').placeholder = t.pName;
+        document.getElementById('pID').placeholder = t.pID;
+        document.getElementById('lbl-dept').innerText = t.dept;
+        document.getElementById('opt-dept-default').innerText = t.deptDefault;
+        document.getElementById('opt-eye').innerText = t.eye;
+        document.getElementById('opt-child').innerText = t.child;
+        document.getElementById('lbl-doctor').innerText = t.doctor;
+        document.getElementById('lbl-time').innerText = t.time;
+        document.getElementById('bookBtn').innerText = t.confirm;
+    }
+
     const doctorsData = {
         "العيون": [
             { name: "د. أحمد", office: "الطابق 1 - مكتب 101" },
@@ -165,6 +251,7 @@
         const d = document.getElementById('dept').value;
         const list = document.getElementById('docList');
         const labels = document.querySelectorAll('.doc-label');
+        const lang = localStorage.getItem('lang') || 'ar';
         
         if(!d) {
             list.classList.add('hidden');
@@ -172,7 +259,7 @@
             return;
         }
 
-        list.innerHTML = '<option value="">-- اختر الطبيب --</option>';
+        list.innerHTML = `<option value="">${translations[lang].docDefault}</option>`;
         doctorsData[d].forEach(doc => {
             list.innerHTML += `<option value="${doc.name}" data-office="${doc.office}">${doc.name}</option>`;
         });
@@ -185,15 +272,15 @@
         const officeDiv = document.getElementById('officeInfo');
         const timeSection = document.getElementById('timeSection');
         const grid = document.getElementById('timeGrid');
+        const lang = localStorage.getItem('lang') || 'ar';
         
         if(!doctor) return;
 
         const selectedOption = document.getElementById('docList').selectedOptions[0];
-        officeDiv.innerText = "📍 موقع العيادة: " + selectedOption.getAttribute('data-office');
+        officeDiv.innerText = translations[lang].officePrefix + selectedOption.getAttribute('data-office');
         officeDiv.style.display = 'block';
         timeSection.classList.remove('hidden');
 
-        // جلب الحجوزات الحالية للدكتور لمنع التكرار
         const snapshot = await db.collection("bookings").where("doctor", "==", doctor).get();
         const busyTimes = snapshot.docs.map(doc => doc.data().time);
 
@@ -217,9 +304,9 @@
         const id = document.getElementById('pID').value;
         const doctor = document.getElementById('docList').value;
         const time = document.getElementById('selectedTime').value;
-        const office = document.getElementById('officeInfo').innerText;
+        const lang = localStorage.getItem('lang') || 'ar';
 
-        if(!name || !id || !doctor || !time) return alert("الرجاء إكمال كافة البيانات واختيار الساعة");
+        if(!name || !id || !doctor || !time) return alert(translations[lang].error);
 
         try {
             await db.collection("bookings").add({
@@ -228,13 +315,17 @@
                 doctor: doctor,
                 department: document.getElementById('dept').value,
                 time: time,
-                office: office,
+                office: document.getElementById('officeInfo').innerText,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-            alert("✅ تم تأكيد حجزك بنجاح!");
+            alert(translations[lang].success);
             location.href = 'my-bookings.html';
-        } catch (e) { alert("خطأ في الاتصال"); }
+        } catch (e) { alert("Error connecting to server"); }
     }
+
+    // تشغيل اللغة عند التحميل
+    const savedLang = localStorage.getItem('lang') || 'ar';
+    setLanguage(savedLang);
 </script>
 
 </body>
