@@ -125,19 +125,10 @@
         <label id="lbl-personal">البيانات الشخصية</label>
         <input type="text" id="pName" placeholder="الاسم الكامل للمريض">
         <input type="number" id="pID" placeholder="الرقم الوطني (T.C. No)">
-        
-        <label id="lbl-dept">القسم الطبي</label>
-        <select id="dept" onchange="loadDocs()">
-            <option value="" id="opt-dept-default">-- اختر القسم --</option>
-            <option value="العيون" id="opt-eye"> العيون </option>
-            <option value="الأطفال" id="opt-child"> الأطفال</option>
-            <option value="العيون" id="opt-eye"> انف واذن و حنجره </option>
-            <option value="الأطفال" id="opt-child"> نساء و ولاده </option>
-            <option value="العيون" id="opt-eye"> علاج طبيعي </option>
-            <option value="الأطفال" id="opt-child"> باطنية </option>
-            <option value="العيون" id="opt-eye"> مخ واعصاب </option>
-            <option value="الأطفال" id="opt-child"> عظام </option>
-        </select>
+       <label id="lbl-dept">القسم الطبي</label>
+<select id="dept" onchange="loadDocs()">
+    </select>
+            
 
         <label class="doc-label hidden" id="lbl-doctor">الطبيب المتاح</label>
         <select id="docList" class="hidden" onchange="loadAvailableTimes()"></select>
@@ -168,6 +159,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // الترجمات شاملة الأقسام الطبية
     const translations = {
         ar: {
             title: "حجز موعد رسمي - HASTANE",
@@ -176,11 +168,9 @@
             formTitle: "تأكيد موعد طبي",
             personal: "البيانات الشخصية",
             pName: "الاسم الكامل للمريض",
-            pID: "الرقم الوطني (T.C. No)",
-            dept: "الالقسم الطبي",
+            pID: "الالرقم الوطني (T.C. No)",
+            dept: "القسم الطبي",
             deptDefault: "-- اختر القسم --",
-            eye: "العيون ",
-            child: "الأطفال ",
             doctor: "الطبيب المتاح",
             docDefault: "-- اختر الطبيب --",
             time: "اختر الساعة المناسبة",
@@ -188,7 +178,18 @@
             officePrefix: "📍 موقع العيادة: ",
             success: "✅ تم تأكيد حجزك بنجاح!",
             error: "الرجاء إكمال كافة البيانات واختيار الساعة",
-            dir: "rtl"
+            dir: "rtl",
+            // أسماء الأقسام
+            depts: {
+                eye: "العيون",
+                child: "الأطفال",
+                ent: "أنف وأذن وحنجرة",
+                obgyn: "نساء وتوليد",
+                physio: "علاج طبيعي",
+                internal: "باطنية",
+                neuro: "مخ وأعصاب",
+                ortho: "عظام"
+            }
         },
         tr: {
             title: "Resmi Randevu Al - HASTANE",
@@ -200,8 +201,6 @@
             pID: "T.C. Kimlik No",
             dept: "Tıbbi Bölüm",
             deptDefault: "-- Bölüm Seçiniz --",
-            eye: "Göz ",
-            child: "Çocuk ",
             doctor: "Uygun Doktor",
             docDefault: "-- Doktor Seçiniz --",
             time: "Uygun Saati Seçiniz",
@@ -209,7 +208,17 @@
             officePrefix: "📍 Klinik Konumu: ",
             success: "✅ Randevunuz başarıyla onaylandı!",
             error: "Lütfen tüm bilgileri doldurun ve saat seçin",
-            dir: "ltr"
+            dir: "ltr",
+            depts: {
+                eye: "Göz ",
+                child: "Çocuk ",
+                ent: "Kulak Burun Boğaz (KBB)",
+                obgyn: "Kadın ve Doğum",
+                physio: "Fizik Tedavi",
+                internal: " Dahiliye",
+                neuro: "Nöroloji",
+                ortho: "Ortopedi"
+            }
         },
         en: {
             title: "Official Appointment Booking - HASTANE",
@@ -221,8 +230,6 @@
             pID: "National ID (T.C. No)",
             dept: "Medical Department",
             deptDefault: "-- Choose Department --",
-            eye: "Ophthalmology ",
-            child: "Pediatrics ",
             doctor: "Available Doctor",
             docDefault: "-- Choose Doctor --",
             time: "Choose Suitable Time",
@@ -230,17 +237,48 @@
             officePrefix: "📍 Clinic Location: ",
             success: "✅ Your appointment has been confirmed successfully!",
             error: "Please complete all data and select a time",
-            dir: "ltr"
+            dir: "ltr",
+            depts: {
+                eye: "Ophthalmology",
+                child: "Pediatrics",
+                ent: "ENT (Ear, Nose, Throat)",
+                obgyn: "Obstetrics & Gynecology",
+                physio: "Physiotherapy",
+                internal: "Internal Medicine",
+                neuro: "Neurology",
+                ortho: "Orthopedics"
+            }
         }
     };
 
+    const doctorsData = {
+        "eye": [
+            { name: "Dr. Ahmet", office: "Floor 1 - Room 101" },
+            { name: "Dr. Sarah", office: "Floor 1 - Room 102" }
+        ],
+        "child": [
+            { name: "Dr. Mehmet", office: "Floor 2 - Room 205" }
+        ],
+        "ent": [{ name: "Dr. Ali", office: "Floor 2 - Room 207" }],
+
+        "obgyn": [{ name: "Dr.Elev", office: "Floor 3 - Room 301" }],
+
+        "physio": [{ name: "Dr.Bahar", office: "Floor 3 - Room 301" }],
+
+        "internal": [{ name: "Dr.can", office: "Floor 4 - Room 405" }],
+
+        "neuro": [{ name: "Dr.Mehmet", office: "Floor 4 - Room 408" }],
+
+        "ortho": [{ name: "Dr.Ahmet", office: "Floor 5 - Room 509" }]
+    };
+
+    const hours = ["08:30", "09:30", "10:30", "11:30", "13:30", "14:30"];
+
     function setLanguage(lang) {
         localStorage.setItem('lang', lang);
-        const html = document.getElementById('main-html');
         const t = translations[lang];
-        
-        html.lang = lang;
-        html.dir = t.dir;
+        document.getElementById('main-html').lang = lang;
+        document.getElementById('main-html').dir = t.dir;
         
         document.getElementById('page-title').innerText = t.title;
         document.getElementById('nav-home').innerText = t.home;
@@ -250,40 +288,38 @@
         document.getElementById('pName').placeholder = t.pName;
         document.getElementById('pID').placeholder = t.pID;
         document.getElementById('lbl-dept').innerText = t.dept;
-        document.getElementById('opt-dept-default').innerText = t.deptDefault;
-        document.getElementById('opt-eye').innerText = t.eye;
-        document.getElementById('opt-child').innerText = t.child;
         document.getElementById('lbl-doctor').innerText = t.doctor;
         document.getElementById('lbl-time').innerText = t.time;
         document.getElementById('bookBtn').innerText = t.confirm;
+
+        updateDeptDropdown(lang);
     }
 
-    const doctorsData = {
-        "العيون": [
-            { name: "د. أحمد", office: "الطابق 1 - مكتب 101" },
-            { name: "د. سارة", office: "الطابق 1 - مكتب 102" }
-        ],
-        "الأطفال": [
-            { name: "د. محمد", office: "الطابق 2 - مكتب 205" }
-        ]
-    };
-
-    const hours = ["08:30", "09:30", "10:30", "11:30", "13:30", "14:30"];
+    function updateDeptDropdown(lang) {
+        const deptSelect = document.getElementById('dept');
+        const t = translations[lang];
+        
+        deptSelect.innerHTML = `<option value="">${t.deptDefault}</option>`;
+        
+        for (const [key, name] of Object.entries(t.depts)) {
+            deptSelect.innerHTML += `<option value="${key}">${name}</option>`;
+        }
+    }
 
     function loadDocs() {
-        const d = document.getElementById('dept').value;
+        const deptKey = document.getElementById('dept').value; 
         const list = document.getElementById('docList');
         const labels = document.querySelectorAll('.doc-label');
         const lang = localStorage.getItem('lang') || 'ar';
         
-        if(!d) {
+        if(!deptKey || !doctorsData[deptKey]) {
             list.classList.add('hidden');
             labels.forEach(l => l.classList.add('hidden'));
             return;
         }
 
         list.innerHTML = `<option value="">${translations[lang].docDefault}</option>`;
-        doctorsData[d].forEach(doc => {
+        doctorsData[deptKey].forEach(doc => {
             list.innerHTML += `<option value="${doc.name}" data-office="${doc.office}">${doc.name}</option>`;
         });
         list.classList.remove('hidden');
@@ -304,6 +340,7 @@
         officeDiv.style.display = 'block';
         timeSection.classList.remove('hidden');
 
+        // جلب المواعيد المحجوزة من Firebase
         const snapshot = await db.collection("bookings").where("doctor", "==", doctor).get();
         const busyTimes = snapshot.docs.map(doc => doc.data().time);
 
@@ -327,6 +364,7 @@
         const id = document.getElementById('pID').value;
         const doctor = document.getElementById('docList').value;
         const time = document.getElementById('selectedTime').value;
+        const deptKey = document.getElementById('dept').value;
         const lang = localStorage.getItem('lang') || 'ar';
 
         if(!name || !id || !doctor || !time) return alert(translations[lang].error);
@@ -336,7 +374,7 @@
                 patient: name,
                 nationalID: id,
                 doctor: doctor,
-                department: document.getElementById('dept').value,
+                department: translations[lang].depts[deptKey], // حفظ اسم القسم باللغة الحالية
                 time: time,
                 office: document.getElementById('officeInfo').innerText,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -346,11 +384,11 @@
         } catch (e) { alert("Error connecting to server"); }
     }
 
-    // تشغيل اللغة عند التحميل
     const savedLang = localStorage.getItem('lang') || 'ar';
     setLanguage(savedLang);
 </script>
 
 </body>
 </html>
+
 
