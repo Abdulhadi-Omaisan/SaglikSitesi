@@ -103,6 +103,30 @@
 
         .nobetci-star { position: absolute; top: 15px; left: 15px; font-size: 1.5rem; }
         [dir="ltr"] .nobetci-star { left: auto; right: 15px; }
+
+
+        
+         @media (max-width: 600px) {
+        header { 
+            flex-direction: column; /* جعل الشعار فوق الأزرار */
+            gap: 15px; 
+            padding: 15px;
+        }
+        .nav-btns { 
+            width: 100%; 
+            justify-content: center; 
+            flex-wrap: wrap; /* السماح للأزرار بالنزول لسطر جديد إذا ضاقت الشاشة */
+        }
+        .hero { padding: 50px 15px 80px; border-radius: 0 0 30px 30px; }
+        .hero h1 { font-size: 1.5rem; }
+        .hero p { font-size: 0.9rem; }
+        
+        .container { 
+            margin-top: -40px; 
+            grid-template-columns: 1fr; /* كرت واحد في كل سطر */
+        }
+        .card { padding: 20px; }
+    }
     </style>
 </head>
 <body>
@@ -448,3 +472,4 @@
 
 </body>
 </html>
+
