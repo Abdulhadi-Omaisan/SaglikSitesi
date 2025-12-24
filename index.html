@@ -1,24 +1,29 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="main-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hastane - نظام كارابوك الطبي</title>
+    <title>Hastane - Karabük Sağlık Sistemi</title>
     <style>
         :root { --primary: #1b4332; --secondary: #2d6a4f; --accent: #d8f3dc; --bg: #f8f9fa; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; transition: 0.3s; }
         
         header { 
             background: white; padding: 15px 5%; display: flex; justify-content: space-between; 
             align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;
         }
         .logo { font-size: 1.6rem; font-weight: bold; color: var(--primary); }
-        .nav-btns a { text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; margin-right: 10px; transition: 0.3s; }
+        .nav-btns { display: flex; align-items: center; gap: 10px; }
+        .nav-btns a { text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; transition: 0.3s; font-size: 0.9rem; }
         .btn-my-bookings { color: var(--primary); border: 1px solid var(--primary); }
         .btn-staff { background: var(--primary); color: white; }
 
+        /* أزرار اللغة */
+        .lang-switcher { display: flex; gap: 5px; margin: 0 10px; }
+        .lang-btn { cursor: pointer; border: 1px solid #ddd; padding: 5px 8px; border-radius: 5px; font-size: 0.75rem; background: #fff; font-weight: bold; }
+        .lang-btn:hover { background: var(--accent); }
+
         .hero { background: var(--primary); color: white; padding: 80px 20px; text-align: center; border-radius: 0 0 50px 50px; }
-        
         .container { max-width: 1100px; margin: -50px auto 50px; padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .card { 
             background: white; padding: 40px; border-radius: 20px; text-align: center; cursor: pointer; 
@@ -33,40 +38,46 @@
         }
     </style>
 </head>
-<body>
+<body id="body-tag">
 
 <div id="nobetci-alert"></div>
 
 <header>
-    <div class="logo"> HASTANE</div>
+    <div class="logo">🏥 HASTANE</div>
     <div class="nav-btns">
-        <a href="my-bookings.html" class="btn-my-bookings">حجوزاتي</a>
-        <a href="login.html" class="btn-staff">دخول الموظفين</a>
+        <div class="lang-switcher">
+            <button class="lang-btn" onclick="setLanguage('ar')">AR</button>
+            <button class="lang-btn" onclick="setLanguage('tr')">TR</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+        <a href="my-bookings.html" class="btn-my-bookings" id="nav-bookings">حجوزاتي</a>
+        <a href="login.html" class="btn-staff" id="nav-staff">دخول الموظفين</a>
     </div>
 </header>
 
 <div class="hero">
-    <h1>رعايتكم هي أولويتنا في كارابوك</h1>
-    <p>احجز موعدك الطبي أو ابحث عن أقرب صيدلية مناوبة بسهولة</p>
+    <h1 id="hero-title">رعايتكم هي أولويتنا في كارابوك</h1>
+    <p id="hero-desc">احجز موعدك الطبي أو ابحث عن أقرب صيدلية مناوبة بسهولة</p>
 </div>
 
 <div class="container">
     <div class="card" onclick="location.href='pharmacies.html'">
         <i>💊</i>
-        <h2>دليل الصيدليات</h2>
-        <p>تعرف على الصيدليات المفتوحة الآن والمناوبة في المدينة.</p>
+        <h2 id="card-pharmacy-title">دليل الصيدليات</h2>
+        <p id="card-pharmacy-desc">تعرف على الصيدليات المفتوحة الآن والمناوبة في المدينة.</p>
     </div>
 
     <div class="card" onclick="location.href='booking.html'">
         <i>📅</i>
-        <h2>حجز موعد</h2>
-        <p>اختر القسم والطبيب المناسب وقم بتأكيد حجزك رسمياً.</p>
+        <h2 id="card-booking-title">حجز موعد</h2>
+        <p id="card-booking-desc">اختر القسم والطبيب المناسب وقم بتأكيد حجزك رسمياً.</p>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script>
+    // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
         apiKey: "AIzaSyBD2Ge6v0TStampv_l_bRGnzTDVPKvCW20",
         authDomain: "hastane-b2c48.firebaseapp.com",
@@ -78,18 +89,82 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // جلب الصيدلية المناوبة الحالية
-    db.collection("settings").doc("pharmacy").onSnapshot((doc) => {
-        if (doc.exists) {
-            const data = doc.data();
-            const alertBox = document.getElementById('nobetci-alert');
-            alertBox.style.display = 'block';
-            alertBox.innerHTML = `📢  ${data.name} | <a href="${data.location}" target="_blank" style="color: #0f5132;"> Link </a>`;
+    // نصوص الترجمة للغات الثلاث
+    const content = {
+        ar: {
+            navBookings: "حجوزاتي",
+            navStaff: "دخول الموظفين",
+            heroTitle: "رعايتكم هي أولويتنا في كارابوك",
+            heroDesc: "احجز موعدك الطبي أو ابحث عن أقرب صيدلية مناوبة بسهولة",
+            pharmacyTitle: "دليل الصيدليات",
+            pharmacyDesc: "تعرف على الصيدليات المفتوحة الآن والمناوبة في المدينة.",
+            bookingTitle: "حجز موعد",
+            bookingDesc: "اختر القسم والطبيب المناسب وقم بتأكيد حجزك رسمياً.",
+            alertPrefix: "📢 الصيدلية المناوبة الآن: ",
+            dir: "rtl"
+        },
+        tr: {
+            navBookings: "Randevularım",
+            navStaff: "Personel Girişi",
+            heroTitle: "Karabük'te Sağlığınız Önceliğimizdir",
+            heroDesc: "Tıbbi randevunuzu alın veya en yakın nöbetçi eczaneyi kolayca bulun",
+            pharmacyTitle: "Eczane Rehberi",
+            pharmacyDesc: "Şehirdeki açık ve nöbetçi eczaneleri hemen öğrenin.",
+            bookingTitle: "Randevu Al",
+            bookingDesc: "Bölümünüzü ve doktorunuzu seçin, randevunuzu onaylayın.",
+            alertPrefix: "📢 Şu An Nöbetçi Eczane: ",
+            dir: "ltr"
+        },
+        en: {
+            navBookings: "My Bookings",
+            navStaff: "Staff Login",
+            heroTitle: "Your Health is Our Priority in Karabük",
+            heroDesc: "Book your medical appointment or find the nearest on-duty pharmacy easily",
+            pharmacyTitle: "Pharmacy Guide",
+            pharmacyDesc: "Find out which pharmacies are open and on-duty in the city.",
+            bookingTitle: "Book Appointment",
+            bookingDesc: "Choose your department and doctor, and confirm your booking officially.",
+            alertPrefix: "📢 Pharmacy on duty now: ",
+            dir: "ltr"
         }
-    });
+    };
+
+    function setLanguage(lang) {
+        localStorage.setItem('lang', lang);
+        const html = document.getElementById('main-html');
+        html.lang = lang;
+        html.dir = content[lang].dir;
+
+        // تحديث النصوص في الصفحة
+        document.getElementById('nav-bookings').innerText = content[lang].navBookings;
+        document.getElementById('nav-staff').innerText = content[lang].navStaff;
+        document.getElementById('hero-title').innerText = content[lang].heroTitle;
+        document.getElementById('hero-desc').innerText = content[lang].heroDesc;
+        document.getElementById('card-pharmacy-title').innerText = content[lang].pharmacyTitle;
+        document.getElementById('card-pharmacy-desc').innerText = content[lang].pharmacyDesc;
+        document.getElementById('card-booking-title').innerText = content[lang].bookingTitle;
+        document.getElementById('card-booking-desc').innerText = content[lang].bookingDesc;
+        
+        // جلب بيانات الصيدلية باللغة المختارة
+        loadPharmacyAlert(lang);
+    }
+
+    function loadPharmacyAlert(lang) {
+        db.collection("settings").doc("pharmacy").onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                const alertBox = document.getElementById('nobetci-alert');
+                alertBox.style.display = 'block';
+                const prefix = content[lang].alertPrefix;
+                alertBox.innerHTML = `${prefix} ${data.name} | <a href="${data.location}" target="_blank" style="color: #0f5132;"> Link 📍 </a>`;
+            }
+        });
+    }
+
+    // تشغيل اللغة المحفوظة أو العربية افتراضياً
+    const savedLang = localStorage.getItem('lang') || 'ar';
+    setLanguage(savedLang);
+
 </script>
 </body>
 </html>
-
-
-
